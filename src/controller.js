@@ -39,20 +39,6 @@ class LibroController{
         res.json(result);// Si se encontró un libro, responde con los detalles del libro formateados como un objeto JSON.
       }
   }
-
-
-  // Método add: Agrega uno o varios libros a la base de datos.
-  async add(req, res){
-      const libros = req.body;// Recupera la información de los libros desde el cuerpo de la solicitud.
-      const insertIds = [];// Un arreglo para almacenar los IDs de los registros insertados con éxito.
-      for (const libro of libros) {// Recorre cada libro en la lista de libros proporcionada.
-           // Realiza una consulta SQL para insertar un nuevo registro en la tabla 'libros' con los datos del libro actual.
-          const [result] = await pool.query(`INSERT INTO libros(nombre, autor, categoria, año-publicacion, ISBN) VALUES (?, ?, ?, ?, ?)`, 
-          [libro.nombre, libro.autor, libro.categoria, libro['año-publicacion'], libro.ISBN]);
-          insertIds.push(result.insertId);// Agrega el ID del registro recién insertado al arreglo insertIds.
-      }
-      res.json({ "ids insertados": insertIds });// Responde con un objeto JSON que contiene los IDs de los registros que se insertaron correctamente.
-  }
 }
 
 export const libro = new LibroController();
