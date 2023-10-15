@@ -53,28 +53,6 @@ class LibroController{
       }
       res.json({ "ids insertados": insertIds });// Responde con un objeto JSON que contiene los IDs de los registros que se insertaron correctamente.
   }
-
-  // Método delete: Elimina un libro de la base de datos por su ID.
-  async delete(req, res){
-      const libro = req.body;// Recupera la información del libro a eliminar desde el cuerpo de la solicitud.
-      // Realiza una consulta SQL para eliminar el registro de la tabla 'libros' con el ID proporcionado.
-      const [result] = await pool.query(`DELETE FROM libros WHERE id=(?)`,[libro.id]);
-      // Responde con un objeto JSON que contiene la cantidad de registros afectados por la operación de eliminación.
-      res.json({"Registrados Eliminados": result.affectedRows});
-  }
-
-  // Método update: Actualiza un libro en la base de datos.
-  async update(req, res) {
-      const libro = req.body;// Recupera la información del libro actualizado desde el cuerpo de la solicitud.
-      // Realiza una consulta SQL para actualizar el registro en la tabla 'libros' con la información proporcionada.
-      const [result] = await pool.query(
-        'UPDATE libros SET nombre = ?, autor = ?, categoria = ?, `año-publicacion` = ?, ISBN = ? WHERE id = ?',
-        [libro.nombre, libro.autor, libro.categoria, libro['año-publicacion'], libro.ISBN, libro.id]
-      );
-      // Responde con un objeto JSON que contiene la cantidad de registros actualizados como resultado de la operación de actualización.
-      res.json({ "Registrados Actualizados": result.changedRows });
-  }    
-
 }
 
 export const libro = new LibroController();
