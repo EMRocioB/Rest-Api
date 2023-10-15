@@ -8,9 +8,7 @@ export const router = Router()
 // Define las rutas y asocia cada una con un controlador específico.
 router.get('/libros', libro.getAll);//obtener todos los libros.
 router.get('/libros/:id', libro.getOne);//obtener un libro específico por su ID.
-router.post('/libros', libro.add);//agregar nuevos libros.
-router.delete('/libros', libro.delete);//eliminar libros.
-router.put('/libros', libro.update);//actualizar información de libros existentes.
+
 
 
 
