@@ -3,29 +3,18 @@ import {pool} from './database.js';
 class LibroController{
   // Método getAll: Obtiene todos los registros de libros y enviarlos como objetos JSON.
   async getAll(req, res) {
-    // Ejecutar una consulta SQL para seleccionar campos específicos de la tabla de libros.
+    try {
+      // Ejecutar una consulta SQL para seleccionar campos específicos de la tabla de libros.
       const [result] = await pool.query('SELECT id, nombre, autor, categoria, DATE_FORMAT(`año-publicacion`, "%d-%m-%Y") AS año_publicacion, ISBN FROM libros');
-    
-      // Mapear los resultados para formatearlos como objetos JSON y unirlos.
-      const formattedResults = result.map(row => {
-        return {
-          id: row.id,
-          nombre: row.nombre,
-          autor: row.autor,
-          categoria: row.categoria,
-          año_publicacion: row.año_publicacion,
-          ISBN: row.ISBN,
-        };
-      });
-    
-      // Enviar la respuesta como texto plano con objetos JSON separados por una línea en blanco.
-      res.type('text');
-      formattedResults.forEach(item => {
-        res.write(JSON.stringify(item) + '\n');
-      });
-    
-      res.end(); // Finalizar la respuesta.
-  }   
+  
+      // Enviar la respuesta como JSON usando el método "json" de "response".
+      res.json(result);
+    } catch (error) {
+      // Manejar errores en caso de que la consulta falle.
+      console.error('Error en la consulta SQL:', error);
+      res.status(500).json({ error: 'Ocurrió un error en el servidor' });
+    }
+  }
    
 
   // Método getOne: Recupera un libro específico de la base de datos utilizando el ID proporcionado en los parámetros.  
