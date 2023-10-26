@@ -1,4 +1,5 @@
 import {pool} from './database.js';
+import validacionLibro from './validacion.js';
 
 class LibroController{
   // Método getAll: Obtiene todos los registros de libros y enviarlos como objetos JSON.
@@ -28,6 +29,43 @@ class LibroController{
         res.json(result);// Si se encontró un libro, responde con los detalles del libro formateados como un objeto JSON.
       }
   }
+
+  //Agreda registros, como array, es decir para ingresar un (o varios) registro: [{"id":1, "nombre":"Libro"...}]
+  async add(req, res) {
+    const libros = req.body; 
+    try {
+      const insertarResultados = [];
+  
+      for (const libro of libros) {
+        try {
+          // Verificar si el libro ya existe en la base de datos por su ID
+          const [existingBooks] = await pool.query('SELECT id FROM libros WHERE id = ?', [libro.id]);
+  
+          // Validar los campos del libro
+          validacionLibro(libro);
+  
+          if (existingBooks.length > 0) {
+            // El libro ya existe, mostrar un mensaje de error o devolver una respuesta apropiada.
+            insertarResultados.push({ "error": `El libro con ID ${libro.id} ya existe en la base de datos` });
+          } else {
+            // El libro no existe y la validación es exitosa, proceder con la inserción.
+            const [result] = await pool.query('INSERT INTO libros (id, nombre, autor, categoria, `año-publicacion`, ISBN) VALUES (?, ?, ?, ?, ?, ?)', [libro.id, libro.nombre, libro.autor, libro.categoria, libro['año-publicacion'], libro.ISBN]);
+            insertarResultados.push({ "id insertado": result.insertId });
+          }
+        } catch (error) {
+          // Captura y maneja cualquier excepción lanzada por la validación
+          insertarResultados.push({ "error": error.message });
+        }
+      }
+  
+      res.json(insertarResultados);
+    } catch (error) {
+      console.error("Error al insertar en la base de datos:", error);
+      res.status(500).json({ error: "No se pudieron insertar los libros en la base de datos" });
+    }
+  }
+  
+
 }
 
 export const libro = new LibroController();
