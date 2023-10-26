@@ -15,6 +15,9 @@ router.post('/libros', libro.add);
 // Actualizar un libro específico por ID
 router.put('/libros/:id', libro.update);
 
+// Ruta para eliminar un libro por ISBN (desde la ruta o el cuerpo de la solicitud)
+router.delete('/libros/delete/:ISBN', libro.deleteISBN);
+
 
 
 
