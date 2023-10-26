@@ -9,7 +9,19 @@ export const router = Router()
 router.get('/libros', libro.getAll);//obtener todos los libros.
 router.get('/libros/:id', libro.getOne);//obtener un libro específico por su ID.
 
+// Crear un nuevo libro
+router.post('/libros', libro.add);
 
+// Actualizar un libro específico por ID
+router.put('/libros/:id', libro.update);
+
+// Ruta para eliminar un libro por ISBN (desde la ruta o el cuerpo de la solicitud)
+router.delete('/libros/delete/:ISBN', libro.deleteISBN);
+
+// Ruta para manejar rutas inválidas.
+router.use((req, res) => {
+    res.status(404).json({ error: "Ruta no encontrada" });
+});
 
 
 
