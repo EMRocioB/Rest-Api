@@ -65,6 +65,35 @@ class LibroController{
     }
   }
   
+  //Actualiza un libro segun el id que se le pase (solo uno por vez) - EJ {"id":1, "nombre":"Libro"...}
+  async update(req, res) {
+    const libro = req.body;
+    const libroId = req.params.id; // Obtener el ID de la ruta
+    try {
+
+      validacionLibro(libro);
+
+        // Verificar si el libro existe antes de actualizar
+      const [existingLibro] = await pool.query('SELECT * FROM libros WHERE id = ?', [libroId]);
+
+      if (existingLibro.length === 0) {
+        // Si no se encontró el libro, responde con un código 404 (No encontrado)
+        res.status(404).json({ error: "Libro no encontrado" });
+        return;
+      }
+        
+        const [result] = await pool.query(
+          'UPDATE libros SET nombre = ?, autor = ?, categoria = ?, `año-publicacion` = ?, ISBN = ? WHERE id = ?',
+          [libro.nombre, libro.autor, libro.categoria, libro['año-publicacion'], libro.ISBN, libroId]
+        );
+    
+    
+        res.json({ "Registros actualizados": result.changedRows });
+      } catch (error) {
+        console.error(error);
+        res.status(400).json({ error: error.message });
+      }
+  }
 
 }
 
