@@ -19,6 +19,12 @@ router.put('/libros/:id', libro.update);
 router.delete('/libros/delete/:ISBN', libro.deleteISBN);
 
 
+// Ruta para manejar rutas inválidas.
+router.use((req, res) => {
+    res.status(404).json({ error: "Ruta no encontrada" });
+});
+
+
 
 
 
