@@ -95,6 +95,33 @@ class LibroController{
       }
   }
 
+  //Elimina un libro segun su ISBN
+  async deleteISBN(req, res) {
+    try {
+      const ISBN = req.params.ISBN; // Obtener el ISBN de los parámetros de la ruta
+
+      if (!ISBN) {
+        return res.status(400).json({ error: "Número ISBN no proporcionado en la ruta" });
+      }
+
+      // Realiza una consulta para buscar el libro por ISBN
+      const [result] = await pool.query('SELECT * FROM libros WHERE ISBN = ?', [ISBN]);
+
+      if (result.length === 0) {
+        return res.status(404).json({ error: "El libro no existe en la base de datos" });
+      }
+
+      // Si se encuentra un libro con el ISBN proporcionado, procede a eliminarlo
+      const [deleteResult] = await pool.query('DELETE FROM libros WHERE ISBN = ?', [ISBN]);
+
+      res.json({ message: "Libro eliminado por ISBN", ISBN: ISBN });
+    } catch (error) {
+      console.error("Error al eliminar de la base de datos:", error);
+      res.status(500).json({ error: "No se pudo eliminar el libro de la base de datos" });
+    }
+  }
+
+
 }
 
 export const libro = new LibroController();
